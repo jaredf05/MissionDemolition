@@ -16,12 +16,26 @@ public class Slingshot : MonoBehaviour
     public GameObject projectile;
     public bool aimingMode;
 
+    [Header("Rubber Band")]
+    public LineRenderer lrFront;
+    public LineRenderer lrBack;
+    public Transform bandFrontAnchor;   // child of Slingshot at front fork tip
+    public Transform bandBackAnchor;    // child of Slingshot at back fork tip
+
+    [Header("Audio")]
+    public AudioSource audioSource;     // on Slingshot
+    public AudioClip snapClip;          // short rubber-band snap
+
     void Awake()
     {
         Transform launchPointTrans = transform.Find("LaunchPoint");
         launchPoint = launchPointTrans.gameObject;
         launchPoint.SetActive(false);
         launchPos = launchPointTrans.position;
+
+        if (lrFront != null) { lrFront.positionCount = 2; lrFront.enabled = false; }
+        if (lrBack  != null) { lrBack.positionCount  = 2; lrBack.enabled  = false; }
+
     }
     void OnMouseEnter()
     {
@@ -42,6 +56,20 @@ public class Slingshot : MonoBehaviour
         projectile = Instantiate(projectilePrefab) as GameObject;
         projectile.transform.position = launchPos;
         projectile.GetComponent<Rigidbody>().isKinematic = true;
+
+        if (lrFront != null && bandFrontAnchor != null)
+        {
+            lrFront.enabled = true;
+            lrFront.SetPosition(0, bandFrontAnchor.position);
+            lrFront.SetPosition(1, projectile.transform.position);
+        }
+        if (lrBack != null && bandBackAnchor != null)
+        {
+            lrBack.enabled = true;
+            lrBack.SetPosition(0, bandBackAnchor.position);
+            lrBack.SetPosition(1, projectile.transform.position);
+        }
+
     }
 
 void Update()
@@ -66,6 +94,10 @@ void Update()
         Vector3 projPos = launchPos + mouseDelta;
         projectile.transform.position = projPos;
 
+        if (lrFront != null) lrFront.SetPosition(1, projectile.transform.position);
+        if (lrBack  != null) lrBack.SetPosition(1, projectile.transform.position);
+
+
         if (Input.GetMouseButtonUp(0))
         { 
             // The mouse has been released
@@ -74,6 +106,14 @@ void Update()
             projRB.isKinematic = false;
             projRB.collisionDetectionMode = CollisionDetectionMode.Continuous;
             projRB.velocity = -mouseDelta * velocityMult;
+
+            // Snap sound
+            if (audioSource != null && snapClip != null) audioSource.PlayOneShot(snapClip);
+
+            // Hide bands
+            if (lrFront != null) lrFront.enabled = false;
+            if (lrBack  != null) lrBack.enabled  = false;
+
 
             FollowCam.SWITCH_VIEW(FollowCam.eView.slingshot);
             FollowCam.POI = projectile; // Set the _MainCamera POI

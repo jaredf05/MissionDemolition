@@ -85,8 +85,21 @@ public class FollowCam : MonoBehaviour
         SwitchView(eView.none);
     }
     
-    static public void SWITCH_VIEW (eView newView)
+    public static void SWITCH_VIEW(eView newView)
     {
+        // Try to self-heal if S is null
+        if (S == null)
+        {
+            var cam = Camera.main;
+            if (cam != null) S = cam.GetComponent<FollowCam>();
+        }
+
+        if (S == null)
+        {
+            Debug.LogError("FollowCam.SWITCH_VIEW called but FollowCam is missing on the Main Camera.");
+            return;
+        }
+
         S.SwitchView(newView);
     }
 
