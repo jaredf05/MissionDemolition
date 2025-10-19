@@ -1,7 +1,7 @@
 ## Mission Demolition – Enhancements Summary
 
-This project expands upon the Mission Demolition tutorial from Jeremy Gibson Bond, Introduction to Game Design, Prototyping, and Development.
-The base gameplay remains faithful to the tutorial—players launch projectiles with a slingshot to knock down castles—but now includes additional features that enhance replayability, usability, and scoring feedback.
+This project expands upon the Mission Demolition tutorial from Introduction to Game Design, Prototyping, and Development by Jeremy Gibson Bond.
+The base gameplay remains the same, where players launch projectiles with a slingshot to knock down castles, but this version introduces new systems that make the game more engaging to replay.
 
 ## Meaningful Enhancements
 #### Score Tracking System
